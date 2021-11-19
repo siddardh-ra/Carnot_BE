@@ -426,6 +426,7 @@ def retrieve_project_data(request,project):
         projects = ProjectProcessedData.objects.filter(project=temp)
         strore_temp_status = {}
         for project in projects:
+            total_temp_dash = {}
             print(project)
             project_id = project.project.id
             try:
@@ -458,6 +459,28 @@ def retrieve_project_data(request,project):
             resp[project_id][date]["power_loss"] = power_loss
             resp[project_id][date]["ortho_file_location"] = project.ortho_file_location
             resp[project_id][date]["kml_file_location"] = project.kml_file_location
+            resp[project_id][date]["report_path"] = project.report_path
+            resp[project_id][date]["thermal_location"] = project.thermal_hotspot_location
+            resp[project_id][date]["cad_file_location"] = project.cad_file_location
+            resp[project_id][date]["total_power_loss"] = project.total_power_loss
+            load_summ = json.loads(project.summary_layers)
+            if not load_summ == {}:
+                for i in load_summ:
+                    if load_summ[i]["sub_group"] == {} :
+                        total_temp_dash[i] = load_summ[i]["Count"]
+                    else:
+                        temp_subgroup = load_summ[i]["sub_group"]
+                        for kl in temp_subgroup :
+                            if kl == "Others":
+                                total_temp_dash["Hotspot"] = temp_subgroup[kl]["Count"]
+                            elif kl == "Table" or kl == "Module":
+                                total_temp_dash[str(kl)+" Failure"] = temp_subgroup[kl]["Count"]
+                            else:
+                                total_temp_dash[kl] = temp_subgroup[kl]["Count"]
+            values = total_temp_dash.values()
+            total = sum(values)
+            resp[project_id][date]["health_history"] = total_temp_dash
+            resp[project_id][date]["total_no_defects"] = total
         return Response(resp)
     except Exception as e:
         return Response({"status":"failure","exception":str(e)})
@@ -489,6 +512,7 @@ def get_projects_status(request):
                     temp[str(k.project.name)]['state'] = k.project.state
                     temp[str(k.project.name)]['country']=k.project.country
                     temp[str(k.project.name)]['status'] = strore_temp_status
+                    temp[str(k.project.name)]['report_path'] = k.report_path
                 except Exception as e:
                     print("Exception in try is ", e)
                     temp[str(k.project.name)] = {}
@@ -500,6 +524,7 @@ def get_projects_status(request):
                     temp[str(k.project.name)]['state'] = k.project.state
                     temp[str(k.project.name)]['country']=k.project.country
                     temp[str(k.project.name)]['status'] = strore_temp_status
+                    temp[str(k.project.name)]['report_path'] = k.report_path
         print(temp)
         return Response(temp)
     except Exception as e:

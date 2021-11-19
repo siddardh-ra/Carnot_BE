@@ -37,6 +37,7 @@ class ProjectProcessedData(models.Model):
     date = models.DateField()
     ortho_file_location = models.CharField(max_length=255, default="", null=True, blank=True)
     kml_file_location = models.CharField(max_length=255, default="", null=True, blank=True)
+    cad_file_location = models.CharField(max_length=255, default="", null=True, blank=True)
     thermal_hotspot_location = models.CharField(max_length=255, default="", null=True, blank=True)
     summary_layers = models.TextField(default="{}", blank=True, null=True)
     inverter_layers = models.TextField(default="{}", blank=True, null=True)
@@ -45,6 +46,7 @@ class ProjectProcessedData(models.Model):
     plant_size_scanned = models.CharField(max_length=20, default="0")
     total_power_loss = models.CharField(max_length=20, default="0")
     total_defects = models.CharField(max_length=20, default="0")
+    report_path = models.CharField(max_length=255, default="", null=True, blank=True)
     status = models.CharField(max_length=50, choices=(('created', 'created'),('ftp', 'ftp'), ('processing', 'processing'),('completed', 'completed')),default="created")
     def __str__(self):
         return self.project.name+ "_" + str(self.date)

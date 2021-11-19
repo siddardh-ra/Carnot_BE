@@ -112,3 +112,11 @@ def create(request):
     except Exception as e:
         print("Exception is ", e)
         return Response({"status": "failed", "Exception": str(e)})
+
+
+
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([])
+def update_profile(request):
+    pass
