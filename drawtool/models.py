@@ -20,7 +20,7 @@ class AOI(models.Model):
     polygon = models.TextField(default=[], null=True, blank=True)
 
     def __str__(self):
-        return self.project + "_" + self.label
+        return self.project.name + "_" + self.label
 
 
 class Measure(models.Model):
