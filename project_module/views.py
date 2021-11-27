@@ -65,7 +65,7 @@ def create(request):
             new_ProcessedData = ProjectProcessedData()
             new_ProcessedData.project = proj_name
             new_ProcessedData.date = data['date']
-            new_ProcessedData.plant_size_scanned = data['plant_size']
+            new_ProcessedData.plant_size_scanned = data['plant_capacity']
             new_ProcessedData.status = "created"
             new_ProcessedData.save()
             flight_summ(request, data['name'], data['date'])
@@ -572,6 +572,7 @@ def add_new_date(request, p_name, date):
         new_ProcessedData = ProjectProcessedData()
         new_ProcessedData.project = proj_name
         new_ProcessedData.date = date
+        new_ProcessedData.plant_size_scanned = proj_name.plant_capacity
         new_ProcessedData.status = "created"
         new_ProcessedData.save()
         return Response({"status": "success"})
