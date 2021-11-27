@@ -83,7 +83,7 @@ def get_all_data_by_date(request,proj_name,date):
                 resp[proj_name][d.date][d.id]={}
             t={}
             t['label']=d.label
-            t['desc'] = d.desc
+            t['desc'] = d.description
             t['date_of_creation'] = str(d.creation_date)
             t['polygon']=json.loads(d.polygon)
             resp[proj_name][d.date][d.id]=t
