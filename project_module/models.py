@@ -30,7 +30,7 @@ class Project(models.Model):
     status = models.CharField(max_length=50, choices=(('created', 'created'),('ftp', 'ftp'), ('processing', 'processing'),('completed', 'completed')),default="created")
 
     def __str__(self):
-        return self.name + "_" + self.plant_size
+        return self.name + "_" + self.plant_capacity
 
 class ProjectProcessedData(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)

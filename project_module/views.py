@@ -597,9 +597,9 @@ def get_dashboard_data(request):
         total_power_loss =0
         total_defects =0
         for k in sub_group:
-            plant_size_scanned = plant_size_scanned + int (k.plant_size_scanned)
-            total_power_loss = total_power_loss+ int(k.total_power_loss)
-            total_defects = total_defects + int(k.total_defects)
+            plant_size_scanned = plant_size_scanned + float(k.plant_size_scanned)
+            total_power_loss = total_power_loss+ float(k.total_power_loss)
+            total_defects = total_defects + float(k.total_defects)
             load_summ = json.loads(k.summary_layers)
             if not load_summ == {}:
                 for i in load_summ:
