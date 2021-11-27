@@ -90,3 +90,14 @@ def get_all_data_by_date(request,proj_name,date):
         return Response(resp)
     except Exception as e:
         return Response({"status":"failed","exception":str(e)})
+
+
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+def delete_aoi(request,id):
+    try:
+        tool=AOI.objects.get(id=id)
+        tool.delete()
+        return Response({"status":"success"})
+    except Exception as e:
+        return Response({"status": "failed","exception":str(e)})
