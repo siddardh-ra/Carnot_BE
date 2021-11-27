@@ -29,19 +29,20 @@ import json
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([])
-def save_aoi(request,proj_name,date):
+def save_aoi(request):
     try:
         data = request.data
         project_data = AOI()
-        project_data.project = proj_name+"_"+date
+        proj_name = Project.objects.get(name=data.get('project_name'))
+        project_data.project = proj_name
         project_data.label = data.get('label')
-        project_data.description = data.get('description')
-        project_data.polygon = data.get('polygon')
+        project_data.date=data.get('date')
+        project_data.description = data.get('desc')
+        project_data.polygon = json.dumps(data.get('polygon'))
         project_data.save()
         return Response({"status":"success"})
     except Exception as e:
         return Response({"status": "failed", "Exception": str(e)})
-
 
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
@@ -60,3 +61,32 @@ def save_measure(request,proj_name,date):
         return Response({"status":"success"})
     except Exception as e:
         return Response({"status": "failed", "Exception": str(e)})
+
+
+@api_view(["GET"])
+@authentication_classes([TokenAuthentication])
+def get_all_data_by_date(request,proj_name,date):
+    try:
+        temp=Project.objects.get(name=proj_name)
+        data=AOI.objects.filter(project=temp).filter(date=date)
+        print(data)
+        resp={}
+        resp[projectId]={}
+        for d in data:
+            try:
+                resp[projectId][d.date]
+            except KeyError as e:
+                resp[projectId][d.date]={}
+            try:
+                resp[projectId][d.date][d.id]
+            except KeyError as e:
+                resp[projectId][d.date][d.id]={}
+            t={}
+            t['label']=d.label
+            t['desc'] = d.desc
+            t['date_of_creation'] = str(d.creation_date)
+            t['polygon']=json.loads(d.polygon)
+            resp[projectId][d.date][d.id]=t
+        return Response(resp)
+    except Exception as e:
+        return Response({"status":"failed","exception":str(e)})
