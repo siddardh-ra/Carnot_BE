@@ -610,7 +610,7 @@ def get_dashboard_data(request):
                         total_temp_dash[i]=load_summ[i]["Count"]
         values = total_temp_dash.values()
         total = sum(values)
-        out_json = {"dashboard_total" : total_temp_dash,"plant_size_scanned": plant_size_scanned,"total_power_loss":total_power_loss,"total_defects":total}
+        out_json = {"dashboard_total" : total_temp_dash,"plant_size_scanned": plant_size_scanned,"total_power_loss":format(total_power_loss, '.2f'),"total_defects":total}
         return Response(out_json)
     except Exception as e:
         print(e)
