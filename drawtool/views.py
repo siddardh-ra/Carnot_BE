@@ -5,7 +5,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import authentication_classes, permission_classes
 from .models import AOI
 from .models import Measure
-
+from project_module.models import Project,ProjectProcessedData
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.template.loader import get_template
@@ -71,22 +71,22 @@ def get_all_data_by_date(request,proj_name,date):
         data=AOI.objects.filter(project=temp).filter(date=date)
         print(data)
         resp={}
-        resp[projectId]={}
+        resp[proj_name]={}
         for d in data:
             try:
-                resp[projectId][d.date]
+                resp[proj_name][d.date]
             except KeyError as e:
-                resp[projectId][d.date]={}
+                resp[proj_name][d.date]={}
             try:
-                resp[projectId][d.date][d.id]
+                resp[proj_name][d.date][d.id]
             except KeyError as e:
-                resp[projectId][d.date][d.id]={}
+                resp[proj_name][d.date][d.id]={}
             t={}
             t['label']=d.label
             t['desc'] = d.desc
             t['date_of_creation'] = str(d.creation_date)
             t['polygon']=json.loads(d.polygon)
-            resp[projectId][d.date][d.id]=t
+            resp[proj_name][d.date][d.id]=t
         return Response(resp)
     except Exception as e:
         return Response({"status":"failed","exception":str(e)})
