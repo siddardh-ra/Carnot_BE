@@ -1,5 +1,7 @@
 from django.db import models
 from datetime import datetime
+from project_module.models import Project,ProjectProcessedData
+
 # Create your models here.
 measures = (
     ('line', 'line'),
@@ -9,14 +11,16 @@ measures = (
 
 
 class AOI(models.Model):
-    project = models.CharField(max_length=255, unique=True)
-    label = models.CharField(max_length=255, default="")
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    # date = models.ForeignKey(ProjectProcessedData, on_delete=models.CASCADE)
+    date=models.CharField(max_length=10)
+    label = models.CharField(max_length=255, default="Undefined")
     description = models.CharField(max_length=255, default="")
     creation_date=models.DateTimeField(default=datetime.now())
-    polygon = models.TextField(default={}, null=True, blank=True)
+    polygon = models.TextField(default=[], null=True, blank=True)
 
     def __str__(self):
-        return self.label + "_" + self.project
+        return self.project + "_" + self.label
 
 
 class Measure(models.Model):
