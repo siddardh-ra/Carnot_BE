@@ -434,6 +434,7 @@ def retrieve_project_data(request,project):
                 resp[project_id]['dates'].append(str(project.date))
                 resp[project_id]['location'] = str(project.project.state)
                 resp[project_id]['plant_size'] = str(project.project.plant_size)
+                resp[project_id]['plant_capacity'] = str(project.project.plant_capacity)
                 resp[project_id]['center'] = str(project.project.center)
                 strore_temp_status[str(project.date)] = project.status
                 resp[project_id]['date_status'] = strore_temp_status
@@ -446,6 +447,7 @@ def retrieve_project_data(request,project):
                 resp[project_id]['dates'].append(str(project.date))
                 resp[project_id]['location'] = str(project.project.state)
                 resp[project_id]['plant_size'] = str(project.project.plant_size)
+                resp[project_id]['plant_capacity'] = str(project.project.plant_capacity)
                 resp[project_id]['center'] = str(project.project.center)
                 strore_temp_status[str(project.date)] = project.status
                 resp[project_id]['date_status'] = strore_temp_status
@@ -507,6 +509,7 @@ def get_projects_status(request):
                     strore_temp_status[str(k.date)] = k.status
                     temp[str(k.project.name)]['name'] = i.name
                     temp[str(k.project.name)]['plant_size'] = k.project.plant_size
+                    temp[str(k.project.name)]['plant_capacity'] = k.project.plant_capacity
                     temp[str(k.project.name)]['center'] = k.project.center
                     temp[str(k.project.name)]['city'] = k.project.city
                     temp[str(k.project.name)]['state'] = k.project.state
@@ -519,6 +522,7 @@ def get_projects_status(request):
                     strore_temp_status[str(k.date)] = k.status
                     temp[str(k.project.name)]['name'] = i.name
                     temp[str(k.project.name)]['plant_size'] = k.project.plant_size
+                    temp[str(k.project.name)]['plant_capacity'] = k.project.plant_capacity
                     temp[str(k.project.name)]['center'] = k.project.center
                     temp[str(k.project.name)]['city'] = k.project.city
                     temp[str(k.project.name)]['state'] = k.project.state
@@ -549,6 +553,7 @@ def Recent_project_List(request):
             temp = {}
             temp['name'] = k.project.name
             temp['plant_size'] = k.project.plant_size
+            temp['plant_capacity'] = k.project.plant_capacity
             temp['center'] = k.project.center
             temp['city'] = k.project.city
             temp['state'] = k.project.state
