@@ -56,7 +56,8 @@ def home(request):
             print("yooooo",user)
             if user is not None:
                 token, _ = Token.objects.get_or_create(user=user)
-                response = Response({"status": "success", "user": username, "token": token.key ,"firstname": user.first_name,"lastname": user.last_name,"email": user.email})
+                userProfile = UserProfile.objects.get(user=user)
+                response = Response({"status": "success", "user": username, "token": token.key ,"firstname": user.first_name,"lastname": user.last_name,"email": user.email,"privilege":userProfile.priviledge})
                 response.set_cookie(key="token", value=token, max_age=900)
                 return response
             else:
@@ -95,6 +96,7 @@ def create(request):
                 profile.mobile_number = data['mobile_number']
                 profile.email =data['email']
                 profile.company = data['company']
+                profile.priviledge = "admin"
                 profile.profile_pic = data["profile_pic"]
                 mygroup, created = Group.objects.get_or_create(name=data['company'])
                 mygroup.save()
