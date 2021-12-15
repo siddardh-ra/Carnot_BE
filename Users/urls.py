@@ -1,4 +1,4 @@
-"""agri URL Configuration
+"""CARNOT URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/2.1/topics/http/urls/
@@ -23,6 +23,7 @@ from django.contrib.auth import views as auth_views
 urlpatterns = [
     path('login/',views.home,name="login"),
     path('create/',views.create,name="create"),
+    path('add_subuser/',views.add_subuser,name="add_subuser"),
     path('update_profile/',views.update_profile,name="update_profile"),
     path('reset_password/',
          auth_views.PasswordResetView.as_view(template_name="reset_password/password_reset.html"),

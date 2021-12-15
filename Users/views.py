@@ -117,6 +117,52 @@ def create(request):
 
 
 
+
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([])
+def add_subuser(request):
+    try:
+        print(request.user)
+        data = request.data
+        if authenticate(username=data['username'], password=data['password']) is None:
+            print(data)
+            try:
+                print(data['username'], data['email'], True)
+                User = get_user_model()
+                user = User.objects.create_user(username=data['username'], email=data['email'], is_staff=True)
+                print("where is pwd", data['password'])
+                user.set_password(data['password'])
+                user.first_name = data['first_name']
+                user.last_name = data['last_name']
+                user.save()
+                token, _ = Token.objects.get_or_create(user=user)
+                profile = UserProfile()
+                profile.user = user
+                profile.mobile_number = data['mobile_number']
+                profile.email =data['email']
+                userProfile = UserProfile.objects.get(user=request.user)
+                profile.company = userProfile.company
+                profile.priviledge = "user"
+                profile.profile_pic = data["profile_pic"]
+                myuser = User.objects.get(username=data['username'])
+                mygroup = Group.objects.get(name=userProfile.company)
+                myuser.groups.add(mygroup)
+                profile.save()
+            except Exception as e:
+                print("Exception is ", e)
+                return Response({"status": "User Already "})
+
+            return Response({"status": "success"}, status=HTTP_200_OK)
+        else:
+            return Response({"status": "User Already exists"})
+
+    except Exception as e:
+        print("Exception is ", e)
+        return Response({"status": "failed", "Exception": str(e)})
+
+
+
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([])
