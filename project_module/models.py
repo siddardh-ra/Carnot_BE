@@ -31,7 +31,7 @@ class Project(models.Model):
     clients = models.ManyToManyField(Group,related_name='client')
 
     def __str__(self):
-        return self.name + "_" + self.plant_size
+        return self.name + "_" + self.plant_capacity
 
 class ProjectProcessedData(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
