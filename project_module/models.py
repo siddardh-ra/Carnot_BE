@@ -23,14 +23,15 @@ class Project(models.Model):
     plant_capacity = models.CharField(max_length=20, default="")
     project_created_date = models.DateField()
     center = models.CharField(max_length=255, default="", null=True, blank=True)
-    organization = models.ForeignKey(Group, on_delete=models.CASCADE)
+    organization = models.ForeignKey(Group, on_delete=models.CASCADE,related_name='org')
     creator = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     properties = models.TextField(default="{}")
     project_dates = models.TextField(default="{}")
     status = models.CharField(max_length=50, choices=(('created', 'created'),('ftp', 'ftp'), ('processing', 'processing'),('completed', 'completed')),default="created")
+    clients = models.ManyToManyField(Group,related_name='client')
 
     def __str__(self):
-        return self.name + "_" + self.plant_capacity
+        return self.name + "_" + self.plant_size
 
 class ProjectProcessedData(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
@@ -48,6 +49,7 @@ class ProjectProcessedData(models.Model):
     total_defects = models.CharField(max_length=20, default="0")
     report_path = models.CharField(max_length=255, default="", null=True, blank=True)
     status = models.CharField(max_length=50, choices=(('created', 'created'),('ftp', 'ftp'), ('processing', 'processing'),('completed', 'completed')),default="created")
+
     def __str__(self):
         return self.project.name+ "_" + str(self.date)
 

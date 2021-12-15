@@ -26,6 +26,7 @@ from rest_framework.status import (
 from rest_framework.permissions import IsAuthenticated
 import json
 import pandas as pd
+from django.db.models import Q
 
 # Create your views here.
 
@@ -161,7 +162,7 @@ class ProjectListApiView(ListAPIView):
             userProfile = UserProfile.objects.get(user=user)
             user_group = list(user.groups.values_list('name', flat=True))
             org = Group.objects.get(name=user_group[0])
-            return Project.objects.filter(organization = org)
+            return Project.objects.filter(Q(organization = org) |Q (clients=org))
         except Exception as e:
             return Project.objects.none()
 
