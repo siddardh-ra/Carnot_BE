@@ -499,7 +499,7 @@ def get_projects_status(request):
         print("user profile is ", userProfile)
         user_group = list(request.user.groups.values_list('name', flat=True))
         company = Group.objects.get(name=user_group[0])
-        test=Project.objects.filter(organization=company)
+        test=Project.objects.filter(Q(organization=company) | Q(clients=company))
         print(test)
         temp={}
         for i in test:
@@ -596,7 +596,7 @@ def get_dashboard_data(request):
         print("user profile is ", userProfile)
         user_group = list(request.user.groups.values_list('name', flat=True))
         company = Group.objects.get(name=user_group[0])
-        sub_group=ProjectProcessedData.objects.filter(project__organization=company)
+        sub_group=ProjectProcessedData.objects.filter(Q(project__organization=company) | Q(project__clients=company))
         print(sub_group)
         total_temp_dash={}
         plant_size_scanned =0
