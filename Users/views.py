@@ -152,8 +152,8 @@ def add_subuser(request):
             except Exception as e:
                 print("Exception is ", e)
                 return Response({"status": "User Already "})
-
-            return Response({"status": "success"}, status=HTTP_200_OK)
+            updated_list = global_subuser(request.user)
+            return Response({"status": "success","updated_list":updated_list}, status=HTTP_200_OK)
         else:
             return Response({"status": "User Already exists"})
 
@@ -168,3 +168,30 @@ def add_subuser(request):
 @permission_classes([])
 def update_profile(request):
     pass
+
+
+def global_subuser(user):
+    userProfile = UserProfile.objects.get(user=user)
+    print("user profile is ", userProfile)
+    user_group = list(user.groups.values_list('name', flat=True))
+    company = Group.objects.get(name=user_group[0])
+    all_users = UserProfile.objects.filter(company=company)
+    t_list = []
+    for i in all_users:
+        temp = {}
+        temp_user = get_user_model().objects.get(username=i.user)
+        temp["Username"] = temp_user.username
+        temp["Full name"] = temp_user.first_name + " "+ temp_user.last_name
+        temp["E mail"] = temp_user.email
+        temp["Privilege"] = i.priviledge
+        temp["Created"] = temp_user.date_joined
+        t_list.append(temp)
+    return t_list
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([])
+def get_subuser(request):
+    print(request.user)
+    x= global_subuser(request.user)
+    return Response(x, status=HTTP_200_OK)
