@@ -16,6 +16,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import authentication_classes, permission_classes
 from .models import UserProfile
 from rest_framework.decorators import api_view
+from project_module.models import Project
 
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -103,6 +104,20 @@ def create(request):
                 myuser = User.objects.get(username=data['username'])
                 myuser.groups.add(mygroup)
                 profile.save()
+                #demo needs to be added
+                try :
+                    company = Group.objects.get(name="DEMOS")
+                    print(company)
+                    test = Project.objects.filter(organization=company)
+                    print(test)
+                    mygroups = Group.objects.get(name=data['company'])
+                    for i in test:
+                        i.clients.add(mygroups)
+                        i.save()
+                except Exception as e:
+                    print("Exception is ", e)
+                    pass
+                #Demo project updation
             except Exception as e:
                 print("Exception is ", e)
                 return Response({"status": "User Already "})
