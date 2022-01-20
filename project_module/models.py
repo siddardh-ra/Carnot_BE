@@ -44,6 +44,7 @@ class ProjectProcessedData(models.Model):
     inverter_layers = models.TextField(default="{}", blank=True, null=True)
     power_loss = models.TextField(default="{}", blank=True, null=True)
     properties = models.TextField(default="{}")
+    total_modules_present = models.CharField(max_length=20, default="0")
     plant_size_scanned = models.CharField(max_length=20, default="0")
     total_power_loss = models.CharField(max_length=20, default="0")
     total_defects = models.CharField(max_length=20, default="0")

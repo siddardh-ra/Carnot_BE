@@ -466,6 +466,7 @@ def retrieve_project_data(request,project):
             resp[project_id][date]["thermal_location"] = project.thermal_hotspot_location
             resp[project_id][date]["cad_file_location"] = project.cad_file_location
             resp[project_id][date]["total_power_loss"] = project.total_power_loss
+            resp[project_id][date]["total_modules_present"] = project.total_modules_present
             load_summ = json.loads(project.summary_layers)
             if not load_summ == {}:
                 for i in load_summ:
