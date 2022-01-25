@@ -29,6 +29,8 @@ class Project(models.Model):
     project_dates = models.TextField(default="{}")
     status = models.CharField(max_length=50, choices=(('created', 'created'),('ftp', 'ftp'), ('processing', 'processing'),('completed', 'completed')),default="created")
     clients = models.ManyToManyField(Group,related_name='client')
+    shared_profile = models.ManyToManyField(User,related_name='shared_profile')
+
 
     def __str__(self):
         return self.name + "_" + self.plant_capacity

@@ -36,4 +36,5 @@ urlpatterns = [
     path('get_projects_status/', views.get_projects_status, name="get_projects_status"),
     url('^add_new_date/(?P<p_name>[\w\ -]+)/(?P<date>[\w\ -]+)$', views.add_new_date, name="date"),
     path('get_dashboard_data/', views.get_dashboard_data, name="get_dashboard_data"),
+    url('^share_project/(?P<id>[\w\ -]+)$', views.share_project, name="share_project"),
 ]

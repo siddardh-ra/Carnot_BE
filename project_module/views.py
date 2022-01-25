@@ -501,15 +501,17 @@ def get_projects_status(request):
         user_group = list(request.user.groups.values_list('name', flat=True))
         company = Group.objects.get(name=user_group[0])
         test=Project.objects.filter(Q(organization=company) | Q(clients=company))
-        print(test)
         temp={}
         for i in test:
             sub_group = ProjectProcessedData.objects.filter(project=i)
             strore_temp_status={}
             for k in sub_group:
+                temp_list=list(k.project.shared_profile.all())
+                temp_arr = [character.email for character in temp_list]
                 try:
                     strore_temp_status[str(k.date)] = k.status
                     temp[str(k.project.name)]['name'] = i.name
+                    temp[str(k.project.name)]['id'] = k.project.id
                     temp[str(k.project.name)]['plant_size'] = k.project.plant_size
                     temp[str(k.project.name)]['plant_capacity'] = k.project.plant_capacity
                     temp[str(k.project.name)]['center'] = k.project.center
@@ -518,11 +520,13 @@ def get_projects_status(request):
                     temp[str(k.project.name)]['country']=k.project.country
                     temp[str(k.project.name)]['status'] = strore_temp_status
                     temp[str(k.project.name)]['report_path'] = k.report_path
+                    temp[str(k.project.name)]['shared'] = {"created_by":k.project.creator.user.email,"shared_to" :temp_arr}
                 except Exception as e:
                     print("Exception in try is ", e)
                     temp[str(k.project.name)] = {}
                     strore_temp_status[str(k.date)] = k.status
                     temp[str(k.project.name)]['name'] = i.name
+                    temp[str(k.project.name)]['id'] = k.project.id
                     temp[str(k.project.name)]['plant_size'] = k.project.plant_size
                     temp[str(k.project.name)]['plant_capacity'] = k.project.plant_capacity
                     temp[str(k.project.name)]['center'] = k.project.center
@@ -531,7 +535,7 @@ def get_projects_status(request):
                     temp[str(k.project.name)]['country']=k.project.country
                     temp[str(k.project.name)]['status'] = strore_temp_status
                     temp[str(k.project.name)]['report_path'] = k.report_path
-        print(temp)
+                    temp[str(k.project.name)]['shared'] = {"created_by":k.project.creator.user.email,"shared_to" :temp_arr}
         return Response(temp)
     except Exception as e:
         print(e)
@@ -622,3 +626,26 @@ def get_dashboard_data(request):
     except Exception as e:
         print(e)
         return Response({"status": "failed", "Exception": str(e)})
+
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([])
+def share_project(request,id):
+    data = request.data
+    email_id=data["email_id"]
+    temp = Project.objects.get(id=id)
+    print(temp)
+    try:
+        temp_list = list(temp.shared_profile.all())
+        if len(temp_list)>=2:
+            return Response({"status": "failed","Notification": "Sharing limit exceeded. Contact administrator for further details"})
+        get_user  = User.objects.get(email=email_id)
+        temp.shared_profile.add(get_user)
+        temp.save()
+        # print(k.project.creator.user.email)
+        temp_list = list(temp.shared_profile.all())
+        temp_arr = [character.email for character in temp_list]
+        return Response({"status": "success","revised_data":{"created_by": temp.creator.user.email, "shared_to": temp_arr}})
+    except Exception as e:
+        print(e)
+        return Response({"status": "failed", "Exception": str(e),"Notification": "No user with the requested e-mail. Kindly notify the user to signup and request again. "})
