@@ -507,7 +507,7 @@ def get_projects_status(request):
             strore_temp_status={}
             for k in sub_group:
                 temp_list=list(k.project.shared_profile.all())
-                temp_arr = [character.email for character in temp_list]
+                temp_arr = [{"name": character.get_full_name(),"email": character.email} for character in temp_list]
                 try:
                     strore_temp_status[str(k.date)] = k.status
                     temp[str(k.project.name)]['name'] = i.name
@@ -644,7 +644,7 @@ def share_project(request,id):
         temp.save()
         # print(k.project.creator.user.email)
         temp_list = list(temp.shared_profile.all())
-        temp_arr = [character.email for character in temp_list]
+        temp_arr = [{"name": character.get_full_name(), "email": character.email} for character in temp_list]
         return Response({"status": "success","revised_data":{"created_by": temp.creator.user.email, "shared_to": temp_arr}})
     except Exception as e:
         print(e)
