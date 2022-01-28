@@ -552,7 +552,7 @@ def Recent_project_List(request):
         print("user profile is ", userProfile)
         user_group = list(request.user.groups.values_list('name', flat=True))
         company = Group.objects.get(name=user_group[0])
-        sub_group=ProjectProcessedData.objects..filter(Q(project__organization=company) | Q(project__clients=company)).order_by('-date')[:3]
+        sub_group=ProjectProcessedData.objects.filter(Q(project__organization=company) | Q(project__clients=company)).order_by('-date')[:3]
         print(sub_group)
         t_list=[]
         for k in sub_group:
