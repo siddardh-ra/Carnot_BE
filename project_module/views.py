@@ -500,7 +500,9 @@ def get_projects_status(request):
         print("user profile is ", userProfile)
         user_group = list(request.user.groups.values_list('name', flat=True))
         company = Group.objects.get(name=user_group[0])
-        test=Project.objects.filter(Q(organization=company) | Q(clients=company))
+        get_user = User.objects.get(username=request.user)
+        # test=Project.objects.filter(Q(organization=company) | Q(clients=company))
+        test=Project.objects.filter(Q(creator=userProfile) | Q(shared_profile=get_user))
         temp={}
         for i in test:
             sub_group = ProjectProcessedData.objects.filter(project=i)
@@ -552,7 +554,9 @@ def Recent_project_List(request):
         print("user profile is ", userProfile)
         user_group = list(request.user.groups.values_list('name', flat=True))
         company = Group.objects.get(name=user_group[0])
-        sub_group=ProjectProcessedData.objects.filter(Q(project__organization=company) | Q(project__clients=company)).order_by('-date')[:3]
+        # sub_group=ProjectProcessedData.objects.filter(Q(project__organization=company) | Q(project__clients=company))
+        get_user = User.objects.get(username=request.user)
+        sub_group=ProjectProcessedData.objects.filter(Q(project__creator=userProfile) | Q(project__shared_profile=get_user))
         print(sub_group)
         t_list=[]
         for k in sub_group:
@@ -601,7 +605,10 @@ def get_dashboard_data(request):
         print("user profile is ", userProfile)
         user_group = list(request.user.groups.values_list('name', flat=True))
         company = Group.objects.get(name=user_group[0])
-        sub_group=ProjectProcessedData.objects.filter(Q(project__organization=company) | Q(project__clients=company))
+        # sub_group=ProjectProcessedData.objects.filter(Q(project__organization=company) | Q(project__clients=company))
+        get_user = User.objects.get(username=request.user)
+        sub_group=ProjectProcessedData.objects.filter(Q(project__creator=userProfile) | Q(project__shared_profile=get_user))
+
         print(sub_group)
         total_temp_dash={}
         plant_size_scanned =0
