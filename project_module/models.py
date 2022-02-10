@@ -44,6 +44,7 @@ class ProjectProcessedData(models.Model):
     thermal_hotspot_location = models.CharField(max_length=255, default="", null=True, blank=True)
     summary_layers = models.TextField(default="{}", blank=True, null=True)
     inverter_layers = models.TextField(default="{}", blank=True, null=True)
+    topography_layers = models.TextField(default="{}", blank=True, null=True)
     power_loss = models.TextField(default="{}", blank=True, null=True)
     properties = models.TextField(default="{}")
     total_modules_present = models.CharField(max_length=20, default="0")

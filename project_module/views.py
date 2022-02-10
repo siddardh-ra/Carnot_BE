@@ -460,6 +460,8 @@ def retrieve_project_data(request,project):
             resp[project_id][date]["inverter_data"] = inverter_data
             power_loss = json.loads(project.power_loss)
             resp[project_id][date]["power_loss"] = power_loss
+            topography_data = json.loads(project.topography_layers)
+            resp[project_id][date]["topography_data"] = topography_data
             resp[project_id][date]["ortho_file_location"] = project.ortho_file_location
             resp[project_id][date]["kml_file_location"] = project.kml_file_location
             resp[project_id][date]["report_path"] = project.report_path
