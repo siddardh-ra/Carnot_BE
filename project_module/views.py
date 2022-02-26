@@ -511,7 +511,7 @@ def get_projects_status(request):
             strore_temp_status={}
             for k in sub_group:
                 temp_list=list(k.project.shared_profile.all())
-                temp_arr = [{"name": character.get_full_name(),"email": character.email} for character in temp_list]
+                temp_arr = [{"name": character.get_full_name(),"email": character.email} for character in temp_list if character.email!="info@datasee.ai"]
                 try:
                     strore_temp_status[str(k.date)] = k.status
                     temp[str(k.project.name)]['name'] = i.name
@@ -630,7 +630,7 @@ def get_dashboard_data(request):
                         total_temp_dash[i]=load_summ[i]["Count"]
         values = total_temp_dash.values()
         total = sum(values)
-        out_json = {"dashboard_total" : total_temp_dash,"plant_size_scanned": plant_size_scanned,"total_power_loss":format(total_power_loss, '.2f'),"total_defects":total}
+        out_json = {"dashboard_total" : total_temp_dash,"plant_size_scanned": format(plant_size_scanned, '.2f'),"total_power_loss":format(total_power_loss, '.2f'),"total_defects":total}
         return Response(out_json)
     except Exception as e:
         print(e)
@@ -646,14 +646,14 @@ def share_project(request,id):
     print(temp)
     try:
         temp_list = list(temp.shared_profile.all())
-        if len(temp_list)>=2:
+        if len(temp_list)>=3:
             return Response({"status": "failed","Notification": "Sharing limit exceeded. Contact administrator for further details"})
         get_user  = User.objects.get(email=email_id)
         temp.shared_profile.add(get_user)
         temp.save()
         # print(k.project.creator.user.email)
         temp_list = list(temp.shared_profile.all())
-        temp_arr = [{"name": character.get_full_name(), "email": character.email} for character in temp_list]
+        temp_arr = [{"name": character.get_full_name(), "email": character.email} for character in temp_list if character.email!="info@datasee.ai"]
         return Response({"status": "success","revised_data":{"created_by": temp.creator.user.email, "shared_to": temp_arr}})
     except Exception as e:
         print(e)
