@@ -158,9 +158,9 @@ EMAIL_HOST_PASSWORD = 'FiR$t#StArTuP@1080'
 
 
 STATIC_URL = 'static/'
-STATICFILES_DIRS = [
-    path.join(BASE_DIR, 'static')
-]
+# STATICFILES_DIRS = [
+#     path.join(BASE_DIR, 'static')
+# ]
 
 STATIC_ROOT = path.join(BASE_DIR, 'static')
 
