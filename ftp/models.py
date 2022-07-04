@@ -1,6 +1,4 @@
 from django.db import models
-from django.contrib.auth.models import User
-import json
 from django.utils import timezone
 from project_module.models import Project,ProjectData
 
