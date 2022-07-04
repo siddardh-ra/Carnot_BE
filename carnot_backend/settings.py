@@ -144,3 +144,13 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'prathmesh@datasee.ai'
 EMAIL_HOST_PASSWORD = 'FiR$t#StArTuP@1080'
+
+
+STATIC_URL = 'static/'
+STATICFILES_DIRS = [
+    path.join(BASE_DIR, 'static')
+]
+
+STATIC_ROOT = path.join(BASE_DIR, 'static')
+
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
