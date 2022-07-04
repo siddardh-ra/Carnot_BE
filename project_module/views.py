@@ -532,6 +532,7 @@ def get_projects_status(request):
                     temp[str(k.project.name)]['plant_capacity'] = k.project.plant_capacity
                     temp[str(k.project.name)]['category'] = k.project.category
                     temp[str(k.project.name)]['center'] = k.project.center
+                    temp[str(k.project.name)]['zoom_level'] = k.project.zoom_level
                     temp[str(k.project.name)]['city'] = k.project.city
                     temp[str(k.project.name)]['state'] = k.project.state
                     temp[str(k.project.name)]['country'] = k.project.country
@@ -550,6 +551,7 @@ def get_projects_status(request):
                          ]['plant_capacity'] = k.project.plant_capacity
                     temp[str(k.project.name)]['center'] = k.project.center
                     temp[str(k.project.name)]['category'] = k.project.category
+                    temp[str(k.project.name)]['zoom_level'] = k.project.zoom_level
                     temp[str(k.project.name)]['city'] = k.project.city
                     temp[str(k.project.name)]['state'] = k.project.state
                     temp[str(k.project.name)]['country'] = k.project.country

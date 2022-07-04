@@ -18,7 +18,7 @@ class Project(models.Model):
         default="", max_length=50, blank=True, null=True)
     plant_capacity = models.CharField(max_length=20, default="")
     category = models.CharField(max_length=100, default="", choices=(('thermography', 'thermography'), ('topography', 'topography')), null=True, blank=True)
-    zoom_level = models.CharField(max_length=10, default="", null=True, blank=True)
+    zoom_level = models.CharField(max_length=10, default="15", null=True, blank=True)
     project_created_date = models.DateField()
     center = models.CharField(
         max_length=255, default="", null=True, blank=True)
