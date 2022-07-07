@@ -96,14 +96,6 @@ DATABASES = {
         'HOST': '127.0.0.1',
         'PORT': '3306',
     }
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.postgresql',
-    #     'NAME': 'carnot',
-    #     'USER': 'postgres',
-    #     'PASSWORD': 'postgres',
-    #     'HOST': 'localhost',
-    #     'PORT': '5432',
-    # },
 }
 DATABASES['default'].update(config(conn_max_age=500))
 
@@ -142,8 +134,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
-STATIC_URL = '/static/'
-
+STATIC_URL = 'static/'
+STATIC_ROOT = path.join(BASE_DIR, 'static')
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
 CORS_ORIGIN_ALLOW_ALL = True
 
@@ -155,13 +148,3 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'prathmesh@datasee.ai'
 EMAIL_HOST_PASSWORD = 'FiR$t#StArTuP@1080'
-
-
-STATIC_URL = 'static/'
-# STATICFILES_DIRS = [
-#     path.join(BASE_DIR, 'static')
-# ]
-
-STATIC_ROOT = path.join(BASE_DIR, 'static')
-
-STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'

@@ -21,12 +21,21 @@ from Users.UserSerializer import PasswordResetSerializers
 from .models import PasswordReset, UserProfile
 
 
-def authMailContent(mail_list):
+def AccountCreated(mail_list):
     sender_email = 'prathmesh@datasee.ai'
-    subject = 'User Registered'
+    subject = 'Account Created'
 
     send_mail(subject, "", sender_email, mail_list,
               html_message=render_to_string('user_created.html'), fail_silently=False)
+    return True
+
+
+def UserCreated(mail_list):
+    sender_email = 'prathmesh@datasee.ai'
+    subject = 'User Created'
+
+    send_mail(subject, "", sender_email, mail_list,
+              html_message=render_to_string('account_created.html'), fail_silently=False)
     return True
 
 
@@ -49,7 +58,8 @@ def home(request):
                 user = authenticate(username=username, password=password)
 
             if user is not None:
-                authMailContent(['prathmesh@datasee.ai'])
+                AccountCreated(['prathmesh@datasee.ai'])
+                UserCreated(['prathmesh@datasee.ai'])
                 token, _ = Token.objects.get_or_create(user=user)
                 userProfile = UserProfile.objects.get(user=user)
                 response = Response({"status": "success", "user": username, "token": token.key, "firstname": user.first_name,
