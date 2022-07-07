@@ -1,9 +1,7 @@
 from json import decoder
-
 from django.contrib.auth.models import Group, User
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
-from django.db.models.query_utils import Q
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
@@ -15,14 +13,13 @@ from rest_framework.decorators import (api_view, authentication_classes,
                                        permission_classes)
 from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK, HTTP_404_NOT_FOUND
-
 from Users.UserSerializer import PasswordResetSerializers
-
 from .models import PasswordReset, UserProfile
 
 
-def AccountCreated(mail_list):
+def UserCreated(mail_list):
     sender_email = 'prathmesh@datasee.ai'
+    # sender_email = 'info@datasee.ai'
     subject = 'Account Created'
 
     send_mail(subject, "", sender_email, mail_list,
@@ -30,12 +27,21 @@ def AccountCreated(mail_list):
     return True
 
 
-def UserCreated(mail_list):
+def AccountCreated(mail_list, data):
     sender_email = 'prathmesh@datasee.ai'
+    # sender_email = 'info@datasee.ai'
+
+    html_message = render_to_string('account_created.html', {
+        'first_name': data['first_name'],
+        'last_name': data['last_name'],
+        'email': data['email'],
+        'company': data['company'],
+        'mobile_number': data['mobile_number'],
+        'company': data['company']})
     subject = 'User Created'
 
     send_mail(subject, "", sender_email, mail_list,
-              html_message=render_to_string('account_created.html'), fail_silently=False)
+              html_message=html_message, fail_silently=False)
     return True
 
 
@@ -58,8 +64,6 @@ def home(request):
                 user = authenticate(username=username, password=password)
 
             if user is not None:
-                AccountCreated(['prathmesh@datasee.ai'])
-                UserCreated(['prathmesh@datasee.ai'])
                 token, _ = Token.objects.get_or_create(user=user)
                 userProfile = UserProfile.objects.get(user=user)
                 response = Response({"status": "success", "user": username, "token": token.key, "firstname": user.first_name,
@@ -106,8 +110,10 @@ def create(request):
                 myuser = User.objects.get(username=data['username'])
                 myuser.groups.add(mygroup)
                 profile.save()
-                authMailContent(['prathmesh@datasee.ai'])
-                # demo needs to be added
+                AccountCreated(['prathmesh@datasee.ai'], data)
+                # AccountCreated(['sanjay@datasee.ai', 'afzal@datasee.ai', 'adhityan@datasee.ai'], data)
+                UserCreated([data['email']])
+
                 try:
                     company = Group.objects.get(name="DEMOS")
                     test = Project.objects.filter(organization=company)
