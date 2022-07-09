@@ -56,6 +56,7 @@ class ProjectProcessedData(models.Model):
         max_length=255, default="", null=True, blank=True)
     csv_path = models.CharField(
         max_length=255, default="", null=True, blank=True)
+    grading_layers = models.TextField(default="{}", blank=True, null=True)
     summary_layers = models.TextField(default="{}", blank=True, null=True)
     inverter_layers = models.TextField(default="{}", blank=True, null=True)
     topography_layers = models.TextField(default="{}", blank=True, null=True)
