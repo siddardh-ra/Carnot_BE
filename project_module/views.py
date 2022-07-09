@@ -445,6 +445,7 @@ def retrieve_project_data(request, project):
                 resp[project_id]['plant_capacity'] = str(
                     project.project.plant_capacity)
                 resp[project_id]['center'] = str(project.project.center)
+                resp[project_id]['category'] = str(project.project.category)
                 resp[project_id]['zoom_level'] = str(
                     project.project.zoom_level)
                 strore_temp_status[str(project.date)] = project.status
@@ -461,6 +462,7 @@ def retrieve_project_data(request, project):
                 resp[project_id]['plant_capacity'] = str(
                     project.project.plant_capacity)
                 resp[project_id]['center'] = str(project.project.center)
+                resp[project_id]['category'] = str(project.project.category)
                 resp[project_id]['zoom_level'] = str(
                     project.project.zoom_level)
                 strore_temp_status[str(project.date)] = project.status
@@ -480,6 +482,10 @@ def retrieve_project_data(request, project):
             resp[project_id][date]["report_path"] = project.report_path
             resp[project_id][date]["thermal_location"] = project.thermal_hotspot_location
             resp[project_id][date]["cad_file_location"] = project.cad_file_location
+            resp[project_id][date]["dtm_legend"] = project.dtm_legend
+            resp[project_id][date]["slope_legend"] = project.slope_legend
+            resp[project_id][date]["csv_path"] = project.csv_path
+            resp[project_id][date]["grading_layers"] = project.grading_layers
             resp[project_id][date]["total_power_loss"] = project.total_power_loss
             resp[project_id][date]["total_modules_present"] = project.total_modules_present
             load_summ = loads(project.summary_layers)
