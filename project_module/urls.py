@@ -19,4 +19,5 @@ urlpatterns = [
     re_path('^add_new_date/(?P<p_name>[\w\ -]+)/(?P<date>[\w\ -]+)$', views.add_new_date, name="date"),
     path('get_dashboard_data/', views.get_dashboard_data, name="get_dashboard_data"),
     re_path('^share_project/(?P<id>[\w\ -]+)$', views.share_project, name="share_project"),
+    path('update', views.update)
 ]

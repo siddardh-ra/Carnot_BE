@@ -445,7 +445,8 @@ def retrieve_project_data(request, project):
                 resp[project_id]['plant_capacity'] = str(
                     project.project.plant_capacity)
                 resp[project_id]['center'] = str(project.project.center)
-                resp[project_id]['zoom_level'] = str(project.project.zoom_level)
+                resp[project_id]['zoom_level'] = str(
+                    project.project.zoom_level)
                 strore_temp_status[str(project.date)] = project.status
                 resp[project_id]['date_status'] = strore_temp_status
             except Exception as e:
@@ -528,11 +529,14 @@ def get_projects_status(request):
                     strore_temp_status[str(k.date)] = k.status
                     temp[str(k.project.name)]['name'] = i.name
                     temp[str(k.project.name)]['id'] = k.project.id
-                    temp[str(k.project.name)]['plant_size'] = k.project.plant_size
-                    temp[str(k.project.name)]['plant_capacity'] = k.project.plant_capacity
+                    temp[str(k.project.name)
+                         ]['plant_size'] = k.project.plant_size
+                    temp[str(k.project.name)
+                         ]['plant_capacity'] = k.project.plant_capacity
                     temp[str(k.project.name)]['category'] = k.project.category
                     temp[str(k.project.name)]['center'] = k.project.center
-                    temp[str(k.project.name)]['zoom_level'] = k.project.zoom_level
+                    temp[str(k.project.name)
+                         ]['zoom_level'] = k.project.zoom_level
                     temp[str(k.project.name)]['city'] = k.project.city
                     temp[str(k.project.name)]['state'] = k.project.state
                     temp[str(k.project.name)]['country'] = k.project.country
@@ -551,7 +555,8 @@ def get_projects_status(request):
                          ]['plant_capacity'] = k.project.plant_capacity
                     temp[str(k.project.name)]['center'] = k.project.center
                     temp[str(k.project.name)]['category'] = k.project.category
-                    temp[str(k.project.name)]['zoom_level'] = k.project.zoom_level
+                    temp[str(k.project.name)
+                         ]['zoom_level'] = k.project.zoom_level
                     temp[str(k.project.name)]['city'] = k.project.city
                     temp[str(k.project.name)]['state'] = k.project.state
                     temp[str(k.project.name)]['country'] = k.project.country
@@ -662,7 +667,6 @@ def share_project(request, id):
     data = request.data
     email_id = data["email_id"]
     temp = Project.objects.get(id=id)
-    # print(temp)
     try:
         temp_list = list(temp.shared_profile.all())
         if len(temp_list) >= 3:
@@ -670,7 +674,6 @@ def share_project(request, id):
         get_user = User.objects.get(email=email_id)
         temp.shared_profile.add(get_user)
         temp.save()
-        # #print(k.project.creator.user.email)
         temp_list = list(temp.shared_profile.all())
         temp_arr = [{"name": character.get_full_name(), "email": character.email}
                     for character in temp_list if character.email != "info@datasee.ai"]
@@ -678,3 +681,14 @@ def share_project(request, id):
     except Exception as e:
         # print(e)
         return Response({"status": "failed", "Exception": str(e), "Notification": "No user with the requested e-mail. Kindly notify the user to signup and request again. "})
+
+
+@api_view(['GET'])
+@authentication_classes([])
+@permission_classes([])
+def update(request):
+    try:
+        Project.objects.all().update(zoom_level = "15", category = "thermography")
+        return Response({"status": "success"})
+    except Exception as e:
+        return Response({"status": "failed", "Exception": str(e)})
