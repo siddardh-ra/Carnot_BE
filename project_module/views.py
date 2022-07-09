@@ -469,14 +469,11 @@ def retrieve_project_data(request, project):
                 resp[project_id]['date_status'] = strore_temp_status
             date = str(project.date)
             resp[project_id][date] = {}
-            summary_data = loads(project.summary_layers)
-            resp[project_id][date]["summary_data"] = summary_data
-            inverter_data = loads(project.inverter_layers)
-            resp[project_id][date]["inverter_data"] = inverter_data
-            power_loss = loads(project.power_loss)
-            resp[project_id][date]["power_loss"] = power_loss
-            topography_data = loads(project.topography_layers)
-            resp[project_id][date]["topography_data"] = topography_data
+            resp[project_id][date]["summary_data"] = loads(project.summary_layers)
+            resp[project_id][date]["inverter_data"] = loads(project.inverter_layers)
+            resp[project_id][date]["power_loss"] = loads(project.power_loss)
+            resp[project_id][date]["topography_data"] = loads(project.topography_layers)
+            resp[project_id][date]["grading_layers"] = loads(project.grading_layers)
             resp[project_id][date]["ortho_file_location"] = project.ortho_file_location
             resp[project_id][date]["kml_file_location"] = project.kml_file_location
             resp[project_id][date]["report_path"] = project.report_path
@@ -485,7 +482,6 @@ def retrieve_project_data(request, project):
             resp[project_id][date]["dtm_legend"] = project.dtm_legend
             resp[project_id][date]["slope_legend"] = project.slope_legend
             resp[project_id][date]["csv_path"] = project.csv_path
-            resp[project_id][date]["grading_layers"] = project.grading_layers
             resp[project_id][date]["total_power_loss"] = project.total_power_loss
             resp[project_id][date]["total_modules_present"] = project.total_modules_present
             load_summ = loads(project.summary_layers)
@@ -503,10 +499,8 @@ def retrieve_project_data(request, project):
                                     kl)+" Failure"] = temp_subgroup[kl]["Count"]
                             else:
                                 total_temp_dash[kl] = temp_subgroup[kl]["Count"]
-            values = total_temp_dash.values()
-            total = sum(values)
             resp[project_id][date]["health_history"] = total_temp_dash
-            resp[project_id][date]["total_no_defects"] = total
+            resp[project_id][date]["total_no_defects"] = sum(total_temp_dash.values())
         return Response(resp)
     except Exception as e:
         return Response({"status": "failure", "exception": str(e)})
@@ -685,7 +679,6 @@ def share_project(request, id):
                     for character in temp_list if character.email != "info@datasee.ai"]
         return Response({"status": "success", "revised_data": {"created_by": temp.creator.user.email, "shared_to": temp_arr}})
     except Exception as e:
-        # print(e)
         return Response({"status": "failed", "Exception": str(e), "Notification": "No user with the requested e-mail. Kindly notify the user to signup and request again. "})
 
 
