@@ -18,8 +18,9 @@ class Project(models.Model):
         default="", max_length=50, blank=True, null=True)
     plant_capacity = models.CharField(max_length=20, default="")
     category = models.CharField(max_length=100, default="", choices=(('thermography', 'thermography'), ('topography', 'topography'),
-    ('grading', 'grading'), ('due diligence', 'due diligence')), null=True, blank=True)
-    zoom_level = models.CharField(max_length=10, default="15", null=True, blank=True)
+                                                                     ('grading', 'grading'), ('due diligence', 'due diligence')), null=True, blank=True)
+    zoom_level = models.CharField(
+        max_length=10, default="15", null=True, blank=True)
     project_created_date = models.DateField()
     center = models.CharField(
         max_length=255, default="", null=True, blank=True)
@@ -48,6 +49,12 @@ class ProjectProcessedData(models.Model):
     cad_file_location = models.CharField(
         max_length=255, default="", null=True, blank=True)
     thermal_hotspot_location = models.CharField(
+        max_length=255, default="", null=True, blank=True)
+    dtm_legend = models.CharField(
+        max_length=255, default="", null=True, blank=True)
+    slope_legend = models.CharField(
+        max_length=255, default="", null=True, blank=True)
+    csv_path = models.CharField(
         max_length=255, default="", null=True, blank=True)
     summary_layers = models.TextField(default="{}", blank=True, null=True)
     inverter_layers = models.TextField(default="{}", blank=True, null=True)
