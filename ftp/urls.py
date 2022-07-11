@@ -7,9 +7,7 @@ urlpatterns = [
             views.upload, name="uploader"),
     re_path("store/(?P<project_name>[\w\ -]+)$",
             views.store_files_meta_info, name="meta_info"),
-
     # url("success/(?P<project_name>[\w\ -]+)/(?P<user_name>[\w\ -]+)$",views.completed_uploading,name="success_uploading"),
-
     # path("email/",views.get_email_users,name="user_emails"),
     # url("folder/(?P<project_name>[\w\ -]+)$",views.folder_finished,name="folder_finished"),
     # url('^get_cad_file/(?P<project_name>[\w\ -]+)$', views.cad_file, name="files"),

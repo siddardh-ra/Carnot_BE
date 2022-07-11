@@ -11,7 +11,6 @@ measures = (
 
 class AOI(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
-    # date = models.ForeignKey(ProjectProcessedData, on_delete=models.CASCADE)
     date = models.CharField(max_length=10)
     label = models.CharField(max_length=255, default="Undefined")
     description = models.CharField(max_length=255, default="")

@@ -7,7 +7,7 @@ from os import mkdir, makedirs
 from json import loads, dumps
 
 
-uploadpath = "/home/tapl/Documents/FTP_FOR_PANDA/"
+uploadpath = "/assets/"
 
 
 @csrf_exempt
@@ -24,10 +24,8 @@ def upload(request, project_name):
         return JsonResponse(data={"status": "failed"}, safe=False)
     try:
         project = project_name
-        print("Project is ", project)
     except Exception as e:
         project = ""
-    # upload = UploaderLog.objects.filter(project=project_name)
     try:
         mkdir(uploadpath)
     except Exception as e:
