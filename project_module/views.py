@@ -132,7 +132,7 @@ class ProjectListApiView(ListAPIView):
     def get_queryset(self):
         try:
             user = self.request.user
-            userProfile = UserProfile.objects.get(user=user)
+            # userProfile = UserProfile.objects.get(user=user)
             user_group = list(user.groups.values_list('name', flat=True))
             org = Group.objects.get(name=user_group[0])
             return Project.objects.filter(Q(organization=org) | Q(clients=org))
@@ -146,7 +146,7 @@ class ProjectListApiView(ListAPIView):
 def get_project(request, name):
     project_name = Project.objects.get(name=name)
     try:
-        userProfile = UserProfile.objects.get(user=request.user)
+        # userProfile = UserProfile.objects.get(user=request.user)
         user_group = list(request.user.groups.values_list('name', flat=True))
         company = Group.objects.get(name=user_group[0])
         sub_group = ProjectData.objects.filter(project=project_name)
@@ -312,7 +312,6 @@ def dump_inverter_data(request, project_name):
         projects.save()
         return Response({"status": "success"})
     except Exception as e:
-        # print(e)
         return Response({"status": "failed", "exception": str(e)})
 
 
@@ -331,7 +330,6 @@ def retrieve_summary_data(request, project_name):
                 resp[project_id]['plant_size'] = str(
                     project.project.plant_size)
             except Exception as e:
-                #print("Exception in try is ", e)
                 resp[project_id] = {}
                 resp[project_id]['project_id'] = project_id
                 resp[project_id]['name'] = project.project.name
@@ -346,7 +344,6 @@ def retrieve_summary_data(request, project_name):
             resp[project_id][date]["summary_data"] = layers
         return Response(resp)
     except Exception as e:
-        #print("Exception after try is ", str(e))
         return Response(resp)
 
 
@@ -358,7 +355,6 @@ def retrieve_inverter_data(request, project_name):
         temp = Project.objects.get(name=project_name)
         projects = ProjectProcessedData.objects.filter(project=temp)
         for project in projects:
-            # print(project)
             project_id = project.project.id
             try:
                 resp[project_id]['name'] = project.project.name
@@ -383,7 +379,6 @@ def retrieve_inverter_data(request, project_name):
             resp[project_id][date]["inverter_data"] = layers
         return Response(resp)
     except Exception as e:
-        #print("Exception after try is ", str(e))
         return Response(resp)
 
 
@@ -485,6 +480,7 @@ def retrieve_project_data(request, project):
             resp[project_id][date]["total_power_loss"] = project.total_power_loss
             resp[project_id][date]["total_modules_present"] = project.total_modules_present
             load_summ = loads(project.summary_layers)
+            total_count = {}
             if not load_summ == {}:
                 for i in load_summ:
                     if load_summ[i]["sub_group"] == {}:
@@ -499,6 +495,11 @@ def retrieve_project_data(request, project):
                                     kl)+" Failure"] = temp_subgroup[kl]["Count"]
                             else:
                                 total_temp_dash[kl] = temp_subgroup[kl]["Count"]
+                    if i in total_count:
+                        total_count[i] = total_count[i] + load_summ[i]["Count"]
+                    else:
+                        total_count[i] = load_summ[i]["Count"]
+            resp[project_id][date]["total_count"] = total_count
             resp[project_id][date]["health_history"] = total_temp_dash
             resp[project_id][date]["total_no_defects"] = sum(total_temp_dash.values())
         return Response(resp)
@@ -575,9 +576,6 @@ def get_projects_status(request):
 def Recent_project_List(request):
     try:
         userProfile = UserProfile.objects.get(user=request.user)
-        # user_group = list(request.user.groups.values_list('name', flat=True))
-        # company = Group.objects.get(name=user_group[0])
-        # sub_group=ProjectProcessedData.objects.filter(Q(project__organization=company) | Q(project__clients=company))
         get_user = User.objects.get(username=request.user)
         sub_group = ProjectProcessedData.objects.filter(Q(project__creator=userProfile) | Q(
             project__shared_profile=get_user)).distinct().order_by('-date')[:3]
@@ -605,7 +603,7 @@ def Recent_project_List(request):
 def add_new_date(request, p_name, date):
     try:
         proj_name = Project.objects.get(name=p_name)
-        proj_date = proj_name.project_created_date
+        # proj_date = proj_name.project_created_date
         new_ProcessedData = ProjectProcessedData()
         new_ProcessedData.project = proj_name
         new_ProcessedData.date = date
@@ -624,15 +622,9 @@ def add_new_date(request, p_name, date):
 def get_dashboard_data(request):
     try:
         userProfile = UserProfile.objects.get(user=request.user)
-        #print("user profile is ", userProfile)
-        user_group = list(request.user.groups.values_list('name', flat=True))
-        company = Group.objects.get(name=user_group[0])
-        # sub_group=ProjectProcessedData.objects.filter(Q(project__organization=company) | Q(project__clients=company))
         get_user = User.objects.get(username=request.user)
         sub_group = ProjectProcessedData.objects.filter(
             Q(project__creator=userProfile) | Q(project__shared_profile=get_user)).distinct()
-
-        # print(sub_group)
         total_temp_dash = {}
         plant_size_scanned = 0
         total_power_loss = 0
@@ -645,17 +637,13 @@ def get_dashboard_data(request):
             load_summ = loads(k.summary_layers)
             if not load_summ == {}:
                 for i in load_summ:
-                    # print(total_temp_dash)
                     if i in total_temp_dash:
                         total_temp_dash[i] = total_temp_dash[i] + \
                             load_summ[i]["Count"]
                     else:
                         total_temp_dash[i] = load_summ[i]["Count"]
-        values = total_temp_dash.values()
-        total = sum(values)
-        out_json = {"dashboard_total": total_temp_dash, "plant_size_scanned": format(
-            plant_size_scanned, '.2f'), "total_power_loss": format(total_power_loss, '.2f'), "total_defects": total}
-        return Response(out_json)
+        return Response({"dashboard_total": total_temp_dash, "plant_size_scanned": format(
+            plant_size_scanned, '.2f'), "total_power_loss": format(total_power_loss, '.2f'), "total_defects": sum(total_temp_dash.values())})
     except Exception as e:
         return Response({"status": "failed", "Exception": str(e)})
 
