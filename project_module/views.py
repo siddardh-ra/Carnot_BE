@@ -1,16 +1,15 @@
-from Users.models import UserProfile
-from rest_framework.authentication import TokenAuthentication
-from rest_framework.decorators import authentication_classes, permission_classes
-from .models import ProjectData
-from .models import Project, ProjectProcessedData
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from django.contrib.auth.models import User, Group
-from rest_framework.generics import ListAPIView
-from .ProjectSerializer import *
-from json import loads, dumps
-from pandas import read_csv
+from json import dumps, loads
+from django.contrib.auth.models import Group, User
 from django.db.models import Q
+from pandas import read_csv
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.decorators import (
+    api_view, authentication_classes, permission_classes)
+from rest_framework.generics import ListAPIView
+from rest_framework.response import Response
+from Users.models import UserProfile
+from .models import Project, ProjectData, ProjectProcessedData
+from .ProjectSerializer import *
 
 
 @api_view(['POST'])
@@ -52,12 +51,10 @@ def create(request):
             flight_summ(request, data['name'], data['date'])
             # trigger_email(request,"Successfully created project "+data['name'],"Project Creation Status")
             return Response({"status": "success"})
+        # trigger_email(request, "Failed to create project", "Project Creation Status")
         except Exception as e:
-            # print(e)
-            # trigger_email(request, "Failed to create project", "Project Creation Status")
             return Response({"status": "failed", "Exception": str(e)})
     except Exception as e:
-        # print(e)
         # trigger_email(request, "Failed to create project", "Project Creation Status")
         return Response({"status": "failed", "Exception": str(e)})
 
@@ -65,7 +62,6 @@ def create(request):
 def flight_summ(request, p_name, date):
     try:
         proj_name = Project.objects.get(name=p_name)
-        proj_date = proj_name.project_created_date
         evn_data = ProjectData()
         evn_data.project = proj_name
         evn_data.date = date
@@ -81,7 +77,6 @@ def flight_summ(request, p_name, date):
 def add_date(request, p_name, date):
     try:
         proj_name = Project.objects.get(name=p_name)
-        proj_date = proj_name.project_created_date
         evn_data = ProjectData()
         evn_data.project = proj_name
         evn_data.date = date
@@ -132,7 +127,6 @@ class ProjectListApiView(ListAPIView):
     def get_queryset(self):
         try:
             user = self.request.user
-            # userProfile = UserProfile.objects.get(user=user)
             user_group = list(user.groups.values_list('name', flat=True))
             org = Group.objects.get(name=user_group[0])
             return Project.objects.filter(Q(organization=org) | Q(clients=org))
@@ -146,7 +140,6 @@ class ProjectListApiView(ListAPIView):
 def get_project(request, name):
     project_name = Project.objects.get(name=name)
     try:
-        # userProfile = UserProfile.objects.get(user=request.user)
         user_group = list(request.user.groups.values_list('name', flat=True))
         company = Group.objects.get(name=user_group[0])
         sub_group = ProjectData.objects.filter(project=project_name)
@@ -350,7 +343,6 @@ def retrieve_summary_data(request, project_name):
 @api_view(["GET"])
 def retrieve_inverter_data(request, project_name):
     try:
-        import json
         resp = {}
         temp = Project.objects.get(name=project_name)
         projects = ProjectProcessedData.objects.filter(project=temp)
@@ -362,9 +354,7 @@ def retrieve_inverter_data(request, project_name):
                 resp[project_id]['location'] = str(project.project.state)
                 resp[project_id]['plant_size'] = str(
                     project.project.plant_size)
-
             except Exception as e:
-                #print("Exception in try is ", e)
                 resp[project_id] = {}
                 resp[project_id]['project_id'] = project_id
                 resp[project_id]['name'] = project.project.name
@@ -384,9 +374,7 @@ def retrieve_inverter_data(request, project_name):
 
 @api_view(["GET"])
 def get_project_data_by_date(request, project, date):
-    #print(project, date)
     try:
-        import json
         resp = {}
         temp = Project.objects.get(name=project)
         projects = ProjectProcessedData.objects.filter(
@@ -400,7 +388,6 @@ def get_project_data_by_date(request, project, date):
                     resp[project_id]['location'] = str(project.project.state)
                     resp[project_id]['plant_size'] = str(
                         project.project.plant_size)
-
                 except Exception as e:
                     resp[project_id] = {}
                     resp[project_id]['project_id'] = project_id
@@ -464,11 +451,15 @@ def retrieve_project_data(request, project):
                 resp[project_id]['date_status'] = strore_temp_status
             date = str(project.date)
             resp[project_id][date] = {}
-            resp[project_id][date]["summary_data"] = loads(project.summary_layers)
-            resp[project_id][date]["inverter_data"] = loads(project.inverter_layers)
+            resp[project_id][date]["summary_data"] = loads(
+                project.summary_layers)
+            resp[project_id][date]["inverter_data"] = loads(
+                project.inverter_layers)
             resp[project_id][date]["power_loss"] = loads(project.power_loss)
-            resp[project_id][date]["topography_data"] = loads(project.topography_layers)
-            resp[project_id][date]["grading_layers"] = loads(project.grading_layers)
+            resp[project_id][date]["topography_data"] = loads(
+                project.topography_layers)
+            resp[project_id][date]["grading_layers"] = loads(
+                project.grading_layers)
             resp[project_id][date]["ortho_file_location"] = project.ortho_file_location
             resp[project_id][date]["kml_file_location"] = project.kml_file_location
             resp[project_id][date]["report_path"] = project.report_path
@@ -480,7 +471,6 @@ def retrieve_project_data(request, project):
             resp[project_id][date]["total_power_loss"] = project.total_power_loss
             resp[project_id][date]["total_modules_present"] = project.total_modules_present
             load_summ = loads(project.summary_layers)
-            total_count = {}
             if not load_summ == {}:
                 for i in load_summ:
                     if load_summ[i]["sub_group"] == {}:
@@ -495,13 +485,9 @@ def retrieve_project_data(request, project):
                                     kl)+" Failure"] = temp_subgroup[kl]["Count"]
                             else:
                                 total_temp_dash[kl] = temp_subgroup[kl]["Count"]
-                    if i in total_count:
-                        total_count[i] = total_count[i] + load_summ[i]["Count"]
-                    else:
-                        total_count[i] = load_summ[i]["Count"]
-            resp[project_id][date]["total_count"] = total_count
             resp[project_id][date]["health_history"] = total_temp_dash
-            resp[project_id][date]["total_no_defects"] = sum(total_temp_dash.values())
+            resp[project_id][date]["total_no_defects"] = sum(
+                total_temp_dash.values())
         return Response(resp)
     except Exception as e:
         return Response({"status": "failure", "exception": str(e)})
@@ -513,8 +499,6 @@ def retrieve_project_data(request, project):
 def get_projects_status(request):
     try:
         userProfile = UserProfile.objects.get(user=request.user)
-        # user_group = list(request.user.groups.values_list('name', flat=True))
-        # company = Group.objects.get(name=user_group[0])
         get_user = User.objects.get(username=request.user)
         test = Project.objects.filter(
             Q(creator=userProfile) | Q(shared_profile=get_user))
@@ -603,7 +587,6 @@ def Recent_project_List(request):
 def add_new_date(request, p_name, date):
     try:
         proj_name = Project.objects.get(name=p_name)
-        # proj_date = proj_name.project_created_date
         new_ProcessedData = ProjectProcessedData()
         new_ProcessedData.project = proj_name
         new_ProcessedData.date = date
@@ -612,7 +595,6 @@ def add_new_date(request, p_name, date):
         new_ProcessedData.save()
         return Response({"status": "success"})
     except Exception as e:
-        # print(e)
         return Response({"status": "failed", "Exception": str(e)})
 
 
@@ -675,7 +657,7 @@ def share_project(request, id):
 @permission_classes([])
 def update(request):
     try:
-        Project.objects.all().update(zoom_level = "15", category = "thermography")
+        Project.objects.all().update(zoom_level="15", category="thermography")
         return Response({"status": "success"})
     except Exception as e:
         return Response({"status": "failed", "Exception": str(e)})

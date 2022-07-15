@@ -18,8 +18,8 @@ from .models import PasswordReset, UserProfile
 
 
 def UserCreated(mail_list):
-    sender_email = 'prathmesh@datasee.ai'
-    # sender_email = 'info@datasee.ai'
+    # sender_email = 'prathmesh@datasee.ai'
+    sender_email = 'info@datasee.ai'
     subject = 'Account Created'
 
     send_mail(subject, "", sender_email, mail_list,
@@ -28,8 +28,8 @@ def UserCreated(mail_list):
 
 
 def AccountCreated(mail_list, data):
-    sender_email = 'prathmesh@datasee.ai'
-    # sender_email = 'info@datasee.ai'
+    # sender_email = 'prathmesh@datasee.ai'
+    sender_email = 'info@datasee.ai'
 
     html_message = render_to_string('account_created.html', {
         'first_name': data['first_name'],
@@ -110,9 +110,9 @@ def create(request):
                 myuser = User.objects.get(username=data['username'])
                 myuser.groups.add(mygroup)
                 profile.save()
-                AccountCreated(['prathmesh@datasee.ai'], data)
+                # AccountCreated(['prathmesh@datasee.ai'], data)
                 # AccountCreated(['sanjay@datasee.ai', 'afzal@datasee.ai', 'adhityan@datasee.ai'], data)
-                UserCreated([data['email']])
+                # UserCreated([data['email']])
 
                 try:
                     company = Group.objects.get(name="DEMOS")
