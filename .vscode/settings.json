@@ -1,0 +1,7 @@
+{
+    "editor.formatOnSave": false,
+    "editor.formatOnSaveMode": "modifications",
+    "editor.formatOnType": false,
+    "editor.formatOnPaste": true,
+    "editor.fontLigatures": false,
+}
